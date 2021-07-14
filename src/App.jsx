@@ -7,26 +7,14 @@ function App() {
     publishDate: "",
   });
 
-  const onTitleChange = (e) => {
+  const onChange = (e) => {
     setBook({
       ...book,
-      title: e.target.value,
+      [e.target.name]:e.target.value,
     });
   };
 
-  const onPagesChange = (e) => {
-    setBook({
-      ...book,
-      pages: e.target.value,
-    });
-  };
 
-  const onPublishDateChange = (e) => {
-    setBook({
-      ...book,
-      publishDate: e.target.value,
-    });
-  };
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -43,7 +31,7 @@ function App() {
           <input
             type="text"
             value={book.title}
-            onChange={onTitleChange}
+            onChange={onChange}
             name="title"
             id="book-title"
           />
@@ -53,7 +41,7 @@ function App() {
           <input
             type="number"
             value={book.pages}
-            onChange={onPagesChange}
+            onChange={onChange}
             name="pages"
             id="book-pages"
           />
@@ -63,8 +51,8 @@ function App() {
           <input
             type="date"
             value={book.publishDate}
-            onChange={onPublishDateChange}
-            name="publish-date"
+            onChange={onChange}
+            name="publishDate"
             id="book-publish-date"
           />
         </div>
