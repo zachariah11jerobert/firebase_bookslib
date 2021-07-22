@@ -1,24 +1,47 @@
 import { useState } from "react";
+import firebase from "firebase/app";
 
 function App() {
+  const db = firebase.firestore();
   const [book, setBook] = useState({
     title: "",
     pages: "",
     publishDate: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const onChange = (e) => {
     setBook({
       ...book,
-      [e.target.name]:e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
 
-
-
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     console.log(book);
+    setLoading(true);
+    await db
+      .collection("books")
+      .add({
+        ...book,
+        pages:parseInt(book.pages),
+        publishDate: new Date(book.publishDate),
+      })
+      .then(function (docRef) {
+        console.log(docRef.id);
+        setBook({
+          title: "",
+          pages: "",
+          publishDate: "",
+        });
+      })
+      .catch(function (error) {
+        console.error("An error has occured: ", error);
+        setError("An error occured while trying to save the book");
+      });
+    setLoading(false);
   };
 
   return (
@@ -57,8 +80,9 @@ function App() {
           />
         </div>
         <div>
-          <button type="submit">Save</button>
+          <button type="submit" disabled={loading}>{loading ? 'Loading':'Save'}</button>
         </div>
+        {error && <p className="error">{error}</p>}
       </form>
     </div>
   );
