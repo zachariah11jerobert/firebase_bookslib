@@ -22,25 +22,23 @@ function App() {
     e.preventDefault();
     console.log(book);
     setLoading(true);
-    await db
-      .collection("books")
-      .add({
+    try {
+      const docRef = await db.collection("books").add({
         ...book,
-        pages:parseInt(book.pages),
+        pages: parseInt(book.pages),
         publishDate: new Date(book.publishDate),
-      })
-      .then(function (docRef) {
-        console.log(docRef.id);
-        setBook({
-          title: "",
-          pages: "",
-          publishDate: "",
-        });
-      })
-      .catch(function (error) {
-        console.error("An error has occured: ", error);
-        setError("An error occured while trying to save the book");
       });
+
+      console.log(docRef.id);
+      setBook({
+        title: "",
+        pages: "",
+        publishDate: "",
+      });
+    } catch (e) {
+      console.error("An error has occured: ", error);
+      setError("An error occured while trying to save the book");
+    }
     setLoading(false);
   };
 
@@ -80,7 +78,9 @@ function App() {
           />
         </div>
         <div>
-          <button type="submit" disabled={loading}>{loading ? 'Loading':'Save'}</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Loading" : "Save"}
+          </button>
         </div>
         {error && <p className="error">{error}</p>}
       </form>
