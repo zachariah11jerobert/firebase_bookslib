@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import firebase from "firebase/app";
 
 function App() {
@@ -10,6 +10,21 @@ function App() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [books, setBooks] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const snapshot = await db.collection("books").get();
+      const booksArray = [];
+      snapshot.forEach((doc) => {
+        booksArray.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+      });
+      setBooks(booksArray);
+    })();
+  }, []);
 
   const onChange = (e) => {
     setBook({
@@ -45,7 +60,7 @@ function App() {
   return (
     <div className="App">
       <h1> Books library</h1>
-
+      <h2>Add New Books</h2>
       <form onSubmit={onSubmit}>
         <div>
           <label htmlFor="book-title">Title : </label>
@@ -84,6 +99,23 @@ function App() {
         </div>
         {error && <p className="error">{error}</p>}
       </form>
+
+      <div className="book-list">
+        <h2>Book List</h2>
+        {books.map((book) => (
+          <div className="book-item">
+            <h4>{book.title}</h4>
+            <span>
+              <strong>Pages: </strong>
+              {book.pages}
+            </span>{" "}
+            <span>
+              <strong>Published Date: </strong>
+              {book.publishDate.toDate().toDateString()}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
